@@ -51,15 +51,24 @@ def validar_documento(documento):
     else:
         return False
     
-def validar_datos(dato, base_datos, llave):
-    datos = base_datos.get(llave)
+def validar_datos(documento, base_datos):
+    datos = base_datos.get("usuario")
     cont = False
     for i in datos:
-        if dato in i:
+        if documento in i:
             cont = True
             break
     return cont
 
+def validar_password(password, base_datos, documento):
+    datos = base_datos.get("usuario")
+    cont = False
+    for i in datos:
+        if documento in i:
+            if password in i:
+                cont = True
+                break
+    return cont
 def dUser(documento, base_datos, llave):
     datos = base_datos.get(llave)
     for i in datos:

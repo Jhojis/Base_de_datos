@@ -20,8 +20,8 @@ for linea in contenido:
         base_datos['fechas']+=[u.sepWords(linea,';')]
     else:
         base_datos['estaciones']+=[u.sepWords(linea,',')]
-menu = True
-while menu == True:
+
+while True:
     print("   --Menu principal--    ")
 
     opcion = input("1. Usuario registrado\n2. Usuario visitante\n3. Salir del sistema\n")
@@ -29,10 +29,10 @@ while menu == True:
     if opcion == "1":
         while True:
             documento = input("Introduce el numero de documento: ")
-            if u.validar_documento(documento) == True and u.validar_datos(documento, base_datos, "usuario") == True:
+            if u.validar_documento(documento) == True and u.validar_datos(documento, base_datos) == True:
                 while True:
                     password = input("Introduce la contraseña: ")
-                    if u.validar_datos(password, base_datos, "usuario") == True and len(password) >= 4:
+                    if u.validar_password(password, base_datos, documento) == True and len(password) >= 4:
                         print("Sesion iniciada")
                         break
                     else:
@@ -44,10 +44,21 @@ while menu == True:
             break  
         
     if u.dUser(documento, base_datos, "usuario") == "Operador":
-        muni = base_datos.get("municipios")
-        for i in range(0, len(muni)):
-            print(f"{i+1}. {muni[i]}")
-                
-        opcion_operador1 = int(input("Selecciona un municipio: "))
-        print(u.dUser(muni[opcion_operador1-1], base_datos, "estaciones"))
-    
+        while True:
+            muni = base_datos.get("municipios")
+            esta = base_datos.get("fechas")
+            for i in range(0, len(muni)):
+                print(f"{i+1}. {muni[i]}")
+            print(f"{len(muni)+1}. Volver al menu principal")
+            opcion_operador1 = int(input("Selecciona un municipio: "))
+            if opcion_operador1 == len(muni)+1:
+                break
+            else:
+                print(u.dUser(muni[opcion_operador1-1], base_datos, "estaciones"))
+                opcion_operador2 = input("Selecciona la estacion: ")
+                for i in esta:
+                    if opcion_operador2 in i:
+                        u.imprimir_tabla([i], 25)
+                    elif int(opcion_operador2) > len(esta):
+                        print("No hay informacion para la estacion seleccionada.")
+                        break
