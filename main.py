@@ -56,9 +56,19 @@ while True:
             else:
                 print(u.dUser(muni[opcion_operador1-1], base_datos, "estaciones"))
                 opcion_operador2 = input("Selecciona la estacion: ")
-                for i in esta:
-                    if opcion_operador2 in i:
-                        u.imprimir_tabla([i], 25)
-                    elif int(opcion_operador2) > len(esta):
-                        print("No hay informacion para la estacion seleccionada.")
-                        break
+                menu2 = input("1. Mostrar medidas\n2. Ingresar medidas\n")
+                if menu2 == "1":
+                    for i in esta:
+                        if opcion_operador2 in i:
+                            u.imprimir_tabla([i], 25)
+                        elif int(opcion_operador2) > len(esta):
+                            print("No hay informacion para la estacion seleccionada.")
+                            break
+                elif menu2 == "2":
+                    pm10 = u.valVariables(Vmin=0,Vmax=100,variable='PM10')
+                    pm25 = u.valVariables(Vmin=0,Vmax=200,variable='PM25')
+                    temp = u.valVariables(Vmin=-20,Vmax=50,variable='Temperatura')
+                    hume = u.valVariables(Vmin=0,Vmax=100,variable='Humedad')
+                    lines = '{fecha};{num};{PM10},{PM25},{temp},{hume}\n'.format(fecha="2019-04-01 00:00:00", num=len(esta)+1, PM10=pm10,PM25=pm25,temp=temp,hume=hume)
+                    u.write_txt('registros_.txt', lines)
+        

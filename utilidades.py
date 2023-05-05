@@ -79,6 +79,11 @@ def dUser(documento, base_datos, llave):
             if documento in i:
                 print(i[:-1])
 
+def write_txt(filename, lines):
+    with open(filename, 'a') as f:
+        f.writelines(lines)
+    return (print("archivo_modificado"))
+    
 def validar_fecha(fecha):
     '''
     Valida que un string corresponda a una fecha válida (con formato yyyy-mm-dd).
@@ -200,3 +205,19 @@ def imprimir_tabla(tabla, ancho, encabezado=None):
     for fila in tabla:
         imprimir_fila(fila)
         dividir_fila(ancho)
+
+def valVariables(Vmin,Vmax,variable):
+    while True:
+        try:
+            variables = float(input(f"Ingresa el valor sensado para la varible {variable}: ".format(variable=variable)))
+
+            if variables >= Vmin and variables <= Vmax:
+                print(f"{variable}: {variables}".format(variable = variables))
+                
+                return variables
+            else:
+                print(f"Valor invalido para {variable}".format(variable=variable))
+
+        except:
+            print("Valor invalido")
+            continue
