@@ -69,6 +69,7 @@ def validar_password(password, base_datos, documento):
                 cont = True
                 break
     return cont
+
 def dUser(documento, base_datos, llave):
     datos = base_datos.get(llave)
     for i in datos:
@@ -80,9 +81,9 @@ def dUser(documento, base_datos, llave):
                 print(i[:-1])
 
 def write_txt(filename, lines):
-    with open(filename, 'a') as f:
+    with open(filename, 'a', encoding='utf-8') as f:
         f.writelines(lines)
-    return (print("archivo_modificado"))
+    return (print("Archivo modificado con exito."))
     
 def validar_fecha(fecha):
     '''
@@ -206,18 +207,21 @@ def imprimir_tabla(tabla, ancho, encabezado=None):
         imprimir_fila(fila)
         dividir_fila(ancho)
 
-def valVariables(Vmin,Vmax,variable):
+def valVariables(Vmin, Vmax, variable):
     while True:
         try:
-            variables = float(input(f"Ingresa el valor sensado para la varible {variable}: ".format(variable=variable)))
-
-            if variables >= Vmin and variables <= Vmax:
-                print(f"{variable}: {variables}".format(variable = variables))
+            valor = input(f"Ingresa el valor sensado para la variable {variable}: ")
+            
+            if valor.lower() == "nd":
+                return -999
                 
-                return variables
+            valor_float = float(valor)
+            
+            if Vmin <= valor_float <= Vmax:
+                print(f"{variable}: {valor_float}")
+                return valor_float
             else:
-                print(f"Valor invalido para {variable}".format(variable=variable))
-
-        except:
-            print("Valor invalido")
-            continue
+                print(f"Valor inválido para {variable}")
+        
+        except ValueError:
+            print("Valor inválido")
