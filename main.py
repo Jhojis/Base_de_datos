@@ -66,7 +66,8 @@ while True:
                         if menu2 == 1:
                             for i in fecha:
                                 if str(opcion_operador2) in i:
-                                    u.imprimir_tabla([i], 25)
+                                    encabezado = ['Fecha','Estacion','Variables']
+                                    u.imprimir_tabla([i], 25, encabezado)
                                 elif int(opcion_operador2) > len(fecha):
                                     print("No hay informacion para la estacion seleccionada.")
                                     break
@@ -82,15 +83,18 @@ while True:
                     break
                 
     elif u.dUser(documento, base_datos, "usuario") == "Administrador":
+        esta = base_datos.get("estaciones")
+        muni = base_datos.get("municipios")
         opcion_admin1 = input("1. Gestionar estaciones\n2. Gestionar usuario\n3. Depuración de registros inconsistentes en la base de datos\n4. Volver al menu inicial\n")
         if opcion_admin1 == "1":
             opcion_admin2 = input("1. Crear estacion\n2. Editar estacion\n3. Eliminar estacion\n")
             if opcion_admin2 == "1":
-                esta = base_datos.get("estaciones")
-                muni = base_datos.get("municipios")
                 nombre_estacion = input("Ingresa el nombre de la estacion: ")
                 for i in range(0, len(muni)):
                     print(f"{i+1}. {muni[i]}")
                 opcion_admin_municipio = int(input("Selecciona un municipio: "))
                 lines_estacion = '{num},{nombre_estacion},{municipio}\n'.format(num=len(esta)+1, nombre_estacion=nombre_estacion, municipio=muni[opcion_admin_municipio-1])
                 u.write_txt('registros_.txt', lines_estacion)
+            elif opcion_admin2 == "2":
+                u.imprimir_tabla([esta], 30)
+                selec_estacion = input("Selecciona la estacion a editar: ")
