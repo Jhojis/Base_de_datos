@@ -70,7 +70,7 @@ def validar_password(password, base_datos, documento):
                 break
     return cont
 
-def dUser(documento, base_datos, llave):
+#def dUser(documento, base_datos, llave):
     datos = base_datos.get(llave)
     for i in datos:
         if llave == "usuario":
@@ -79,6 +79,24 @@ def dUser(documento, base_datos, llave):
         elif llave == "estaciones":
             if documento in i:
                 print(i[:-1])
+                
+def dUser(documento, archivo,llave):
+    data = archivo.get(llave)
+    est = []
+    for i in data:
+        if llave == 'usuario':
+            if documento in i:
+                return i[-1]
+        elif llave == 'estaciones':
+            if documento in i:
+                est += i
+        elif llave == 'fechas':
+            if documento in i:
+                return i
+        else:
+            return "No hay estaciones disponibles"
+
+    return est
 
 def write_txt(filename, lines):
     with open(filename, 'a', encoding='utf-8') as f:
@@ -98,6 +116,15 @@ def validar_fecha(fecha):
         return True
     except ValueError:
         return False
+    
+def edit(archivo, line):
+    with open(archivo, 'r', encoding='utf-8') as f, open("archivo_temp.txt", "w", encoding='utf-8') as new:
+        for linea in f:
+            if line not in linea:
+                new.write(linea)
+    import os
+    os.remove(archivo)
+    os.rename("archivo_temp.txt", "registros_.txt")
 
 def limpiar_pantalla():
     '''

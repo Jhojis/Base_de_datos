@@ -21,6 +21,8 @@ for linea in contenido:
         base_datos['fechas']+=[u.sepWords(linea,';')]
     else:
         base_datos['estaciones']+=[u.sepWords(linea,',')]
+        
+file.close()
 
 while True:
     print("   --Menu principal--    ")
@@ -98,3 +100,15 @@ while True:
             elif opcion_admin2 == "2":
                 u.imprimir_tabla([esta], 30)
                 selec_estacion = input("Selecciona la estacion a editar: ")
+                estacion = u.dUser(selec_estacion, base_datos, "estaciones")
+                print(estacion)
+                linea_str = f"{estacion[0]},{estacion[1]},{estacion[2]}"
+                print(linea_str)
+                u.edit("registros_.txt", linea_str)
+                nueva_estacion = input("Ingrese el nombre de la nueva estacion: ")
+                for i in range(0, len(muni)):
+                    print(f"{i+1}. {muni[i]}")
+                opcion_admin_municipio = int(input("Selecciona un municipio: "))
+                lines_estacion = '{num},{nombre_estacion},{municipio}\n'.format(num=selec_estacion, nombre_estacion=nueva_estacion, municipio=muni[opcion_admin_municipio-1])
+                u.write_txt('registros_.txt', lines_estacion)
+                
