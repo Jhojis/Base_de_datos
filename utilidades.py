@@ -50,7 +50,16 @@ def validar_documento(documento):
         return es
     else:
         return False
-    
+
+def validar_repDocumento(documento, base_datos, llave):
+    datos = base_datos.get(llave)
+    cont = False
+    for i in datos:
+        if documento not in i:
+            cont = True
+            break
+    return cont
+
 def validar_datos(documento, base_datos):
     datos = base_datos.get("usuario")
     cont = False
@@ -65,7 +74,7 @@ def validar_password(password, base_datos, documento):
     cont = False
     for i in datos:
         if documento in i:
-            if password in i:
+            if password in i and len(password) >= 4:
                 cont = True
                 break
     return cont
@@ -252,3 +261,37 @@ def valVariables(Vmin, Vmax, variable):
         
         except ValueError:
             print("Valor inválido")
+
+def creacionUser(variable, base = None):
+    while True:
+        try:
+            if variable != 'rol':
+                variables = input(f"     Ingresa {variable}: ")
+
+                if variable == 'nombre':
+                    v = validar_nombre(variables)
+                    if v == True:
+                        return variables
+                    else: print(f'     {variable} invalido')
+                elif variable == 'documento':
+                    v = validar_documento(variables)
+                    if v == True:
+                        return variables
+                    else: print(f'     {variable} invalido')
+                elif variable == 'contraseña':
+                    if len(variables) >= 4:
+                        vcon = input("     Confirme su contraseña: ")
+                        if variables == vcon:
+                            return variables
+                        else: print("     Contraseñas no coinciden, intente nuevamente")
+                    else: print(f'     {variable} invalido')
+            elif variable == 'rol':
+                r = int(input("     1. Administrador\n     2. Operador\n     Seleccione cual es el rol: "))
+                if r == 1:
+                    rol = 'Administrador' ; return rol
+                elif r == 2: rol = 'Operador' ; return rol
+                else: print("Opción invalida"); 
+                 
+            else: print(f'     {variable} invalido'); continue
+
+        except: print("     Valor invalido"); continue

@@ -35,7 +35,7 @@ while True:
             if u.validar_documento(documento) == True and u.validar_datos(documento, base_datos) == True:
                 while True:
                     password = input("Introduce la contraseña: ")
-                    if u.validar_password(password, base_datos, documento) == True and len(password) >= 4:
+                    if u.validar_password(password, base_datos, documento) == True:
                         print("Sesion iniciada")
                         break
                     else:
@@ -85,8 +85,10 @@ while True:
                     break
                 
     elif u.dUser(documento, base_datos, "usuario") == "Administrador":
+        usuarios = base_datos.get("usuario")
         esta = base_datos.get("estaciones")
         muni = base_datos.get("municipios")
+        fechas = base_datos.get("fechas")
         opcion_admin1 = input("1. Gestionar estaciones\n2. Gestionar usuario\n3. Depuración de registros inconsistentes en la base de datos\n4. Volver al menu inicial\n")
         if opcion_admin1 == "1":
             opcion_admin2 = input("1. Crear estacion\n2. Editar estacion\n3. Eliminar estacion\n")
@@ -98,10 +100,9 @@ while True:
                 lines_estacion = '{num},{nombre_estacion},{municipio}\n'.format(num=len(esta)+1, nombre_estacion=nombre_estacion, municipio=muni[opcion_admin_municipio-1])
                 u.write_txt('registros_.txt', lines_estacion)
             elif opcion_admin2 == "2":
-                u.imprimir_tabla([esta], 30)
+                u.imprimir_tabla(esta, 30)
                 selec_estacion = input("Selecciona la estacion a editar: ")
                 estacion = u.dUser(selec_estacion, base_datos, "estaciones")
-                print(estacion)
                 linea_str = f"{estacion[0]},{estacion[1]},{estacion[2]}"
                 print(linea_str)
                 u.edit("registros_.txt", linea_str)
@@ -111,4 +112,38 @@ while True:
                 opcion_admin_municipio = int(input("Selecciona un municipio: "))
                 lines_estacion = '{num},{nombre_estacion},{municipio}\n'.format(num=selec_estacion, nombre_estacion=nueva_estacion, municipio=muni[opcion_admin_municipio-1])
                 u.write_txt('registros_.txt', lines_estacion)
-                
+            elif opcion_admin2 == "3":
+                u.imprimir_tabla(esta, 30)
+                selec_estacion = input("Selecciona la estacion a eliminar: ")
+                fecha = u.dUser(selec_estacion, base_datos, "fechas")
+                if len(fecha) == 0:
+                    estacion = u.dUser(selec_estacion, base_datos, "estaciones")
+                    linea_str = f"{estacion[0]},{estacion[1]},{estacion[2]}"
+                    u.edit("registros_.txt", linea_str)
+
+        elif opcion_admin1 == "2":
+            opcion_admin2 = input("1. Crear usuario\n2. Editar usuario\n3. Eliminar usuario\n")
+            if opcion_admin2 == "1":
+                doc = u.creacionUser("documento")
+                nombre = u.creacionUser("nombre")
+                new_password = u.creacionUser("contraseña")
+                rol = u.creacionUser("rol")
+                lines_usuario = '<{doc};{nombre};{password};{rol}>\n'.format(doc=doc, nombre=nombre, password=new_password, rol=rol)
+                u.write_txt("registros_.txt", lines_usuario)
+
+            elif opcion_admin2 == "2":
+                u.imprimir_tabla(usuarios, 30)
+                while True:
+                    selec_usuario = input("Introduce el documento del usuario a editar: ")
+                    if u.validar_datos(selec_usuario, base_datos) == True and u.validar_documento(selec_usuario) == True:
+                        u.edit("registros_.txt", selec_usuario)
+                        doc = u.creacionUser("documento")
+                        nombre = u.creacionUser("nombre")
+                        new_password = u.creacionUser("contraseña")
+                        rol = u.creacionUser("rol")
+                        lines_usuario = '<{doc};{nombre};{password};{rol}>\n'.format(doc=doc, nombre=nombre, password=new_password, rol=rol)
+                        u.write_txt("registros_.txt", lines_usuario)
+                        break
+                    else:
+                        print("Documento no encontrado, intente nuevamente")
+                        continue
