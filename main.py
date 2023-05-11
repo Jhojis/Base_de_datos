@@ -120,6 +120,8 @@ while True:
                     estacion = u.dUser(selec_estacion, base_datos, "estaciones")
                     linea_str = f"{estacion[0]},{estacion[1]},{estacion[2]}"
                     u.edit("registros_.txt", linea_str)
+                else:
+                    print("Esta estacion tiene registro de valores asociado a ella, no se puede eliminar.")
 
         elif opcion_admin1 == "2":
             opcion_admin2 = input("1. Crear usuario\n2. Editar usuario\n3. Eliminar usuario\n")
@@ -143,6 +145,18 @@ while True:
                         rol = u.creacionUser("rol")
                         lines_usuario = '<{doc};{nombre};{password};{rol}>\n'.format(doc=doc, nombre=nombre, password=new_password, rol=rol)
                         u.write_txt("registros_.txt", lines_usuario)
+                        break
+                    else:
+                        print("Documento no encontrado, intente nuevamente")
+                        continue
+
+            elif opcion_admin2 == "3":
+                u.imprimir_tabla(usuarios, 30)
+                while True:
+                    selec_usuario = input("Introduce el documento del usuario a eliminar: ")
+                    if u.validar_datos(selec_usuario, base_datos) == True and u.validar_documento(selec_usuario) == True:
+                        u.edit("registros_.txt", selec_usuario)
+                        print("Usuario eliminado con exito.")
                         break
                     else:
                         print("Documento no encontrado, intente nuevamente")
