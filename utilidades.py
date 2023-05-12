@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+
 def sepWords(palabras,separador):
     word=''
     words=[]
@@ -295,3 +296,26 @@ def creacionUser(variable, base = None):
             else: print(f'     {variable} invalido'); continue
 
         except: print("     Valor invalido"); continue
+        
+def base_datos(filename):
+    base_datos={}
+    base_datos['usuario']=[]
+    base_datos['municipios']=[]
+    base_datos['estaciones']=[]
+    base_datos['variables']=[]
+    base_datos['fechas']=[]
+    for linea in filename:
+        if linea[0]=='<':
+            base_datos['usuario']+=[sepWords(linea[1:-2],';')]
+        elif linea[0]==':':
+            string_municipios=linea[1:-1]
+            words=sepWords(string_municipios,',')
+            base_datos['municipios']+=words
+        elif 'PM10' in linea:
+            base_datos['variables']+=[sepWords(linea,';')]
+        elif linea[4]=='-':
+            base_datos['fechas']+=[sepWords(linea,';')]
+        else:
+            base_datos['estaciones']+=[sepWords(linea,',')]
+
+    return base_datos

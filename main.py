@@ -1,27 +1,8 @@
 import datetime
 import  utilidades as u
-file= open('registros_.txt',encoding='utf-8')
+file = open('registros_.txt',encoding='utf-8')
 contenido=file.readlines()
-base_datos={}
-base_datos['usuario']=[]
-base_datos['municipios']=[]
-base_datos['estaciones']=[]
-base_datos['variables']=[]
-base_datos['fechas']=[]
-for linea in contenido:
-    if linea[0]=='<':
-        base_datos['usuario']+=[u.sepWords(linea[1:-2],';')]
-    elif linea[0]==':':
-        string_municipios=linea[1:-1]
-        words=u.sepWords(string_municipios,',')
-        base_datos['municipios']+=words
-    elif 'PM10' in linea:
-        base_datos['variables']+=[u.sepWords(linea,';')]
-    elif linea[4]=='-':
-        base_datos['fechas']+=[u.sepWords(linea,';')]
-    else:
-        base_datos['estaciones']+=[u.sepWords(linea,',')]
-        
+base_datos=u.base_datos(contenido)
 file.close()
 
 while True:
@@ -161,3 +142,14 @@ while True:
                     else:
                         print("Documento no encontrado, intente nuevamente")
                         continue
+                    
+        elif opcion_admin1 == "3":
+            print("Depuracion de registros iconsistentes")
+            with open("registros_.txt", "r", encoding="utf-8") as orig, open("registros_v2.txt", "r", encoding="utf-8") as dup:
+                fecha1 = u.base_datos(orig.readlines())
+                fecha2 = u.base_datos(dup.readlines())
+                fecha1 = fecha1.get("fechas")
+                fecha2 = fecha2.get("fechas")
+                for i, j in zip(fecha1, fecha2):
+                    if i != j:
+                        print(i)
