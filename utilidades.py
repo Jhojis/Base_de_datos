@@ -312,10 +312,32 @@ def base_datos(filename):
             words=sepWords(string_municipios,',')
             base_datos['municipios']+=words
         elif 'PM10' in linea:
-            base_datos['variables']+=[sepWords(linea,';')]
+            base_datos['variables']+=sepWords(linea,';')
         elif linea[4]=='-':
             base_datos['fechas']+=[sepWords(linea,';')]
         else:
             base_datos['estaciones']+=[sepWords(linea,',')]
 
     return base_datos
+
+def difDias(lista,d):
+    from datetime import datetime
+    fecha_now = datetime.now() ; fecha_now = datetime.strftime(fecha_now,'%Y-%m-%d %H:%M:%S') ; fecha_now = datetime.strptime(fecha_now,'%Y-%m-%d %H:%M:%S')
+    fecha= []
+    for k in range(len(lista)):
+        dif = fecha_now - datetime.strptime(lista[k],'%Y-%m-%d %H:%M:%S')
+        if d != 0 and dif.days <= d:
+            fecha.append(dUser(lista[k],base_datos,lista))
+        
+    return fecha
+
+def mostrarEstadisticas(base, municipios, variables, lista):
+    dic = {}
+    municipios = base_datos.get("municipios")
+    fechas = base_datos.get("fechas")
+    estaciones = base_datos.get("estaciones")
+    for i in range(len(estaciones)):
+        pass
+    
+    
+    

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import  utilidades as u
 file = open('registros_.txt',encoding='utf-8')
 contenido=file.readlines()
@@ -31,39 +31,49 @@ while True:
             while True:
                 muni = base_datos.get("municipios")
                 fecha = base_datos.get("fechas")
+                esta = base_datos.get("estaciones")
                 for i in range(0, len(muni)):
                     print(f"{i+1}. {muni[i]}")
                 print(f"{len(muni)+1}. Volver al menu principal")
-                opcion_operador1 = int(input("Selecciona un municipio: "))
+                try:
+                    opcion_operador1 = int(input("Selecciona un municipio: "))
+                except:
+                    print("---Valor invalido, intente de nuevo.\n")
+                    continue
                 if opcion_operador1 == len(muni)+1:
                     break
                 else:
-                    while True:
+                        print("0. Volver a seleccionar municipio")
                         print(u.dUser(muni[opcion_operador1-1], base_datos, "estaciones"))
-                        print(f"{len(muni)+1}. Volver a seleccionar municipio")
-                        opcion_operador2 = int(input("Selecciona la estacion: "))
-                        if opcion_operador2 == len(muni)+1:
+                        if len(u.dUser(muni[opcion_operador1-1], base_datos, "estaciones")) != 0:
+                            opcion_operador2 = int(input("Selecciona la estacion: "))
+                            if opcion_operador2 == 0:
+                                continue
+                            else:
+                                menu2 = int(input("1. Mostrar medidas\n2. Ingresar medidas\n"))
+                                if menu2 == 1:
+                                    for i in fecha:
+                                        if str(opcion_operador2) in i:
+                                            encabezado = ['Fecha','Estacion','Variables']
+                                            u.imprimir_tabla([i], 25, encabezado)
+                                            break
+                                        elif int(opcion_operador2) > len(fecha):
+                                            print("No hay informacion para la estacion seleccionada.")
+                                            break
+                                elif menu2 == 2:
+                                    pm10 = u.valVariables(Vmin=0,Vmax=100,variable='PM10')
+                                    pm25 = u.valVariables(Vmin=0,Vmax=200,variable='PM25')
+                                    temp = u.valVariables(Vmin=-20,Vmax=50,variable='Temperatura')
+                                    hume = u.valVariables(Vmin=0,Vmax=100,variable='Humedad')
+                                    fecha_actual = datetime.now()
+                                    fecha_actual_str = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
+                                    lines_variables = '{fecha};{num};{{{PM10},{PM25},{temp},{hume}}}\n'.format(fecha=fecha_actual_str, num=len(fecha)+1, PM10=pm10,PM25=pm25,temp=temp,hume=hume)
+                                    u.write_txt('registros_.txt', lines_variables)
                             break
                         else:
-                            menu2 = int(input("1. Mostrar medidas\n2. Ingresar medidas\n"))
-                            if menu2 == 1:
-                                for i in fecha:
-                                    if str(opcion_operador2) in i:
-                                        encabezado = ['Fecha','Estacion','Variables']
-                                        u.imprimir_tabla([i], 25, encabezado)
-                                    elif int(opcion_operador2) > len(fecha):
-                                        print("No hay informacion para la estacion seleccionada.")
-                                        break
-                            elif menu2 == 2:
-                                pm10 = u.valVariables(Vmin=0,Vmax=100,variable='PM10')
-                                pm25 = u.valVariables(Vmin=0,Vmax=200,variable='PM25')
-                                temp = u.valVariables(Vmin=-20,Vmax=50,variable='Temperatura')
-                                hume = u.valVariables(Vmin=0,Vmax=100,variable='Humedad')
-                                fecha_actual = datetime.datetime.now()
-                                fecha_actual_str = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
-                                lines_variables = '{fecha};{num};{{{PM10},{PM25},{temp},{hume}}}\n'.format(fecha=fecha_actual_str, num=len(fecha)+1, PM10=pm10,PM25=pm25,temp=temp,hume=hume)
-                                u.write_txt('registros_.txt', lines_variables)
-                        break
+                            print("No hay estaciones disponibles, intente con otro municipio.\n")
+                            continue
+            break
                     
         elif u.dUser(documento, base_datos, "usuario") == "Administrador":
             
@@ -136,12 +146,12 @@ while True:
                     u.imprimir_tabla(usuarios, 30)
                     while True:
                         selec_usuario = input("Introduce el documento del usuario a eliminar: ")
-                        if u.validar_datos(selec_usuario, base_datos) == True and u.validar_documento(selec_usuario) == True:
+                        if u.validar_datos(selec_usuario, base_datos) == True and u.validar_documento(selec_usuario) == True and selec_usuario != documento:
                             u.edit("registros_.txt", selec_usuario)
                             print("Usuario eliminado con exito.")
                             break
                         else:
-                            print("Documento no encontrado, intente nuevamente")
+                            print("Documento no encontrado o documento en uso, intente nuevamente")
                             continue
                         
             elif opcion_admin1 == "3":
@@ -162,4 +172,43 @@ while True:
                         elif i != j:
                             print(i)
                             print(j)
+                        
+#Hasta acá llegué. CHAO :)
+                        
+    elif opcion == "2":
+        opcion_visitante1 = input("1. Visualizar estadisticas\n2. Volver al menu principal\n")
+        if opcion_visitante1 == "1":
+            opcion_visitante2 = input("Elegir el periodo de tiempo a evaluar:\n1. Ultimos 7 dias\n2. Ultimos 30 dias\n3. Elegir fechas manualmente\n")
+            fechas = base_datos.get("fechas")
+            variables = base_datos.get("variables")
+            muni = base_datos.get("municipios")
+            fechas_list = []
+            fecha_actual = datetime.now()
+            fecha_actual_str = datetime.strftime(fecha_actual,"%Y-%m-%d %H:%M:%S")
+            fecha_actual_str = datetime.strptime(fecha_actual_str,"%Y-%m-%d %H:%M:%S")
+            for i in range(len(fechas)):
+                fechas_list.append(fechas[i][0])
+                
+            for a in range(len(variables)):
+                print(f"{a+1}. {variables[a]}")
+            print(f"{len(variables)+1}. Todas las variables")
+            var = input("Eliga una o varias variables separando por ,: ")
+            for b in range(len(muni)):
+                print(f"{b+1}. {muni[b]}")
+            print(f"{len(muni)+1}. Todos los municipios")
+            mun = input("Eliga uno o varios municipios separando por ,: ")
+            ver = input("Ingrese el modo de visualizacion\n1. Visualizar por pantalla\n2. Almacenarse en el archivo de texto\n")
+            
+    elif opcion == "3":
+        break   
+        
+                       
+                        
+                        
+                        
+                        
+        
+                       
+
+                            
                         
